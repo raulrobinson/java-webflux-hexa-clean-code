@@ -308,4 +308,3 @@ Reglas:
 📜 Licencia
 
 MIT License
-
