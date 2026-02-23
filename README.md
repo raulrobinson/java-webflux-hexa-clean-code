@@ -1,93 +1,311 @@
-# java-webflux-hexa-clean-code
+# 🚀 Java WebFlux Hexagonal Archetype
 
+Arquetipo empresarial basado en **Spring Boot + WebFlux**, aplicando principios de **Clean Code**, **Arquitectura Hexagonal (Ports & Adapters)** y diseñado para integrarse con **AWS y Azure** mediante Driven Adapters desacoplados.
 
+---
 
-## Getting started
+## 🧠 Filosofía del Proyecto
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Este arquetipo promueve:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- ✅ Arquitectura Hexagonal (Ports & Adapters)
+- ✅ Clean Architecture
+- ✅ Programación Reactiva (Project Reactor)
+- ✅ Separación estricta de responsabilidades
+- ✅ Testabilidad real
+- ✅ Desacoplamiento del framework
+- ✅ Orientación Cloud Native (AWS & Azure)
+- ✅ Diseño Cloud Agnostic
 
-## Add your files
+---
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## 🏗 Arquitectura
+
+```mermaid
+graph TD
+    subgraph Domain Layer
+        D1[Entities]
+        D2[Value Objects]
+        D3[Domain Services]
+    end
+
+    subgraph Application Layer
+        A1[Use Cases]
+        A2[Application Services]
+    end
+
+    subgraph Ports
+        P1[Input Ports Interfaces]
+        P2[Output Ports Interfaces]
+    end
+
+    subgraph Adapters
+        AD1[Driven Adapters Implementations]
+        AD2[Driving Adapters Controllers, CLI, etc.]
+    end
+
+    D1 --> D3
+    D2 --> D3
+    D3 --> A1
+    A1 --> A2
+    A2 --> P1
+    A2 --> P2
+    P1 --> AD2
+    P2 --> AD1
+```
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/raul.bolivar.n/java-webflux-hexa-clean-code.git
-git branch -M main
-git push -uf origin main
+│
+├── domain
+│   ├── model
+│   └── ports
+│       ├── inbound
+│       └── outbound
+│
+├── applications
+│   ├── app-service
+│   └── use-case
+│
+└── infrastructure
+    ├── driven-adapters
+    │   ├── external-api
+    │   ├── grpc
+    │   ├── database
+    │   ├── messaging
+    │   └── event
+    │
+    ├── helpers
+    │
+    └── entry-points
+        ├── reactive-web
+        ├── cli
+        └── scheduler
+ 
 ```
 
-## Integrate with your tools
+---
 
-* [Set up project integrations](https://gitlab.com/raul.bolivar.n/java-webflux-hexa-clean-code/-/settings/integrations)
+## ⚙️ Stack Tecnológico
 
-## Collaborate with your team
+- ☕ Java 21+
+- 🌱 Spring Boot 3+
+- ⚡ Spring WebFlux
+- 🔄 Project Reactor
+- 🧪 JUnit 5 + Mockito
+- 🐳 Docker
+- ☁ AWS SDK v2
+- ☁ Azure SDK
+- 🔐 Spring Security (opcional)
+- 📦 Gradle / Maven
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+---
 
-## Test and Deploy
+## 🔌 Driven Adapters Cloud
 
-Use the built-in continuous integration in GitLab.
+Este arquetipo incluye plantillas desacopladas para:
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+### ☁ AWS
 
-***
+- DynamoDB
+- S3
+- SNS
+- SQS
+- Lambda
+- API Gateway
+- Secrets Manager
+- Parameter Store
+- EventBridge
 
-# Editing this README
+### ☁ Azure
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- Cosmos DB
+- Blob Storage
+- Service Bus
+- Azure Functions
+- Key Vault
+- Event Grid
 
-## Suggestions for a good README
+Todos implementados como **Adapters que implementan puertos del dominio**, nunca dependencias directas en la capa de negocio.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+---
 
-## Name
-Choose a self-explaining name for your project.
+## 🎯 Principios Aplicados
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### 🔹 Dependency Rule
+Las capas internas no dependen de las externas.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### 🔹 Reactive First
+Todos los puertos usan `Mono<T>` y `Flux<T>`.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### 🔹 Clean Code
+- Nombres semánticos
+- Métodos pequeños
+- Sin lógica en controladores
+- Sin lógica en adapters
+- Sin lógica de infraestructura en dominio
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### 🔹 Cloud Agnostic
+El dominio no sabe si está en AWS o Azure.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+---
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## 🧩 Ejemplo de Puerto (Outbound)
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+```java
+public interface RetrieveUserPort {
+    Mono<User> findById(String id);
+}
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+```java
+@Service
+public class RetrieveUserUseCase {
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+    private final RetrieveUserPort retrieveUserPort;
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+    public RetrieveUserUseCase(RetrieveUserPort retrieveUserPort) {
+        this.retrieveUserPort = retrieveUserPort;
+    }
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+    public Mono<User> execute(String id) {
+        return retrieveUserPort.findById(id);
+    }
+}
+```
 
-## License
-For open source projects, say how it is licensed.
+---
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## 🧩 Ejemplo de Adapter (AWS DynamoDB)
+
+```java
+@Repository
+public class DynamoDBUserAdapter implements RetrieveUserPort {
+
+    private final DynamoDBClient dynamoDBClient;
+
+    public DynamoDBUserAdapter(DynamoDBClient dynamoDBClient) {
+        this.dynamoDBClient = dynamoDBClient;
+    }
+
+    @Override
+    public Mono<User> findById(String id) {
+        // Lógica para consultar DynamoDB y mapear a User
+    }
+}
+```
+
+---
+
+## 🧩 Ejemplo de Adapter
+
+```java
+@Component
+public class DynamoUserAdapter implements RetrieveUserPort {
+
+    private final DynamoDbAsyncClient client;
+
+    public DynamoUserAdapter(DynamoDbAsyncClient client) {
+        this.client = client;
+    }
+
+    @Override
+    public Mono<User> findById(String id) {
+        return Mono.fromFuture(
+                client.getItem(builder -> builder.tableName("users"))
+        ).map(this::mapToDomain);
+    }
+
+    private User mapToDomain(GetItemResponse response) {
+        return new User(...);
+    }
+}
+```
+
+---
+
+## 🧪 Testing Strategy
+
+- Unit tests en Domain y UseCases
+- Adapter tests con Testcontainers
+- Contract tests para APIs
+- WebTestClient para capa REST
+- StepVerifier para testing reactivo
+
+---
+
+## 🐳 Docker
+
+```dockerfile
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+COPY build/libs/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+```bash
+docker build -t webflux-hexagonal .
+docker run -p 8080:8080 webflux-hexagonal
+```
+
+## 🚀 Despliegue
+
+- AWS: Elastic Beanstalk, ECS, Lambda
+- Azure: App Service, AKS, Functions
+- CI/CD: GitHub Actions, Jenkins, GitLab CI
+- Infraestructura: Terraform, CloudFormation, ARM Templates
+- Observabilidad: CloudWatch, Azure Monitor, Prometheus, Grafana
+- Seguridad: IAM, RBAC, Secrets Manager, Key Vault
+- Escalabilidad: Auto Scaling, AKS Horizontal Pod Autoscaler
+- Resiliencia: Circuit Breaker, Retry, Bulkhead (Resilience4j)
+- Cost Optimization: Right-sizing, Spot Instances, Serverless
+- Cloud Agnostic: Terraform, Crossplane, Kubernetes
+- Multi-Cloud: Terraform, Crossplane, Kubernetes
+
+---
+
+## 📌 Casos de Uso Ideales
+
+- Microservicios empresariales
+- Arquitecturas Event Driven
+- Serverless Backends
+- Integraciones multi-cloud
+- Gateways de transformación
+- APIs BFF reactivas
+- Arquitecturas Clean Architecture reales
+
+---
+
+## 🧠 ¿Por qué este arquetipo?
+
+Porque la mayoría de proyectos:
+
+- Mezclan dominio con infraestructura
+- Acoplan negocio a AWS o Azure
+- Usan WebFlux pero bloquean (.block())
+- No respetan la Dependency Rule
+- No separan correctamente los puertos
+- Este repositorio soluciona eso desde la base.
+
+---
+
+## 🤝 Contribuciones
+
+Pull Requests bienvenidos.
+
+Reglas:
+- No violar la arquitectura hexagonal
+- No introducir dependencias en dominio
+- Mantener estilo reactivo
+- Seguir principios Clean Code
+
+---
+
+📜 Licencia
+
+MIT License
+
