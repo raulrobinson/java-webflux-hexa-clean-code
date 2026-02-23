@@ -1,0 +1,47 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url = "https://repo.spring.io/milestone" }
+        maven { url = "https://repo.spring.io/snapshot" }
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url = "https://repo.spring.io/milestone" }
+        maven { url = "https://repo.spring.io/snapshot" }
+    }
+}
+
+buildCache {
+    local {
+        directory = new File(rootDir, 'build-cache')
+    }
+}
+
+rootProject.name = 'java-webflux-hexa-clean-code'
+
+// --- [APPLICATION LAYER] ---
+include "app-service"
+//include "use-case"
+
+// --- [DOMAIN LAYER] ---
+//include "model"
+//include "ports"
+
+// --- [INFRASTRUCTURE LAYER] ---
+//include "reactive-web"
+//include 'external-api'
+//include 'helpers'
+
+// --- [DIRECTORY MAPPING] ---
+project(':app-service').projectDir = file('applications/app-service')
+//project(':use-case').projectDir = file('applications/use-case')
+//project(':model').projectDir = file('domain/model')
+//project(':ports').projectDir = file('domain/ports')
+//project(':reactive-web').projectDir = file('infrastructure/entry-points/reactive-web')
+//project(':external-api').projectDir = file('infrastructure/driven-adapters/external-api')
+//project(':helpers').projectDir = file('infrastructure/helpers')

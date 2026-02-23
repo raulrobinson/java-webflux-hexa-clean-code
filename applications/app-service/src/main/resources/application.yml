@@ -1,0 +1,187 @@
+spring:
+  main:
+    lazy-initialization: true
+  application:
+    name: ${SPRING_APPLICATION_NAME}
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: false
+      path: "/h2"
+  profiles:
+    include: null
+  jackson:
+    time-zone: ${TIMEZONE:UTC}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      timeout: ${REDIS_TIMEOUT:2000ms}
+      port: ${REDIS_PORT:6379}
+server:
+  port: ${SERVER_PORT:8080}
+  address: ${SERVER_ADDRESS:0.0.0.0}
+service:
+  disabled: ${SERVICE_DISABLED:false}
+info:
+  app:
+    name: "<Title Here> - Product"
+    description: "<API Description Here>."
+    version: "1.0.0"
+    encoding: "UTF-8"
+    java:
+      version: "21"
+  example:
+    archetype:
+      version: "1.0.0"
+      architecture: "Clean Architecture + Hexagonal"
+      libraries:
+        - "example-core:1.0.0-SNAPSHOT"
+        - "example-router:1.0.0-SNAPSHOT"
+        - "example-logging:1.0.0-SNAPSHOT"
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  show-actuator: false
+example:
+  external-apis:
+    current-account:
+      endpoint: ${CURRENT_ACCOUNT_SERVICE_URL}
+      channel-option: ${CURRENT_ACCOUNT_SERVICE_CHANNEL_OPTION:PT5S}
+      timeout: ${CURRENT_ACCOUNT_SERVICE_TIMEOUT:PT12S}
+    customer-account:
+      endpoint: ${CUSTOMER_ACCOUNT_SERVICE_URL}
+      channel-option: ${CUSTOMER_ACCOUNT_SERVICE_CHANNEL_OPTION:PT5S}
+      timeout: ${CUSTOMER_ACCOUNT_SERVICE_TIMEOUT:PT12S}
+    term-deposit:
+      endpoint: ${TERM_DEPOSIT_SERVICE_URL}
+      channel-option: ${TERM_DEPOSIT_SERVICE_CHANNEL_OPTION:PT5S}
+      timeout: ${TERM_DEPOSIT_SERVICE_TIMEOUT:PT12S}
+    financial-instrument:
+      endpoint: ${FINANCIAL_INSTRUMENT_SERVICE_URL}
+      channel-option: ${FINANCIAL_INSTRUMENT_SERVICE_CHANNEL_OPTION:PT5S}
+      timeout: ${FINANCIAL_INSTRUMENT_SERVICE_TIMEOUT:PT12S}
+    customer-profile:
+      endpoint: ${CUSTOMER_PROFILE_SERVICE_URL}
+      channel-option: ${CUSTOMER_PROFILE_SERVICE_CHANNEL_OPTION:PT5S}
+      timeout: ${CUSTOMER_PROFILE_SERVICE_TIMEOUT:PT12S}
+  logging:
+    format: ${LOGGING_FORMAT:JSON} # (MINIMAL | PRETTY_JSON | CONSOLE | JSON)
+    mask-confidential: ${LOGGING_MASK_ENABLED:true}
+    record-type: U # ( U: Unified | I: Input | O: Output )
+    log-group: scaffoldLogs
+    environment: ${SPRING_PROFILES_ACTIVE}
+    aop:
+      enabled: true
+    dynamodb:
+      enabled: false
+    service-name: ${spring.application.name}
+    layer: api-product # (canal: fachada | api-experience | api-composition | api-product | api-system | wrapper | x-component | core)
+    bian-api-name: test
+  exception:
+    type: ${EXCEPTION_TYPE:https://live.integration.example.com/errors}
+    error-mapping:
+      url: ${ERROR_BASE_URL}
+      path: ${ERROR_PATH:/error-mapping-wrapper/v1/find}
+  rest:
+    bian:
+      businessArea: "<Business Area Here>"
+      businessDomain: "<Business Domain Here>"
+      serviceDomain: "<Service Domain Here>"
+resilience4j:
+  circuitbreaker:
+    instances:
+      customer-profile:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+        recordExceptions:
+          - org.springframework.web.server.ResponseStatusException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+      customer-account:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+        recordExceptions:
+          - org.springframework.web.server.ResponseStatusException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+      current-account:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+        recordExceptions:
+          - org.springframework.web.server.ResponseStatusException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+      term-deposit:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+        recordExceptions:
+          - org.springframework.web.server.ResponseStatusException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+      financial-instrument:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+        recordExceptions:
+          - org.springframework.web.server.ResponseStatusException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+      errors-mapping:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
+        recordExceptions:
+          - org.springframework.web.server.ResponseStatusException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus,env,configprops"
+      base-path: "/actuator"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+    info:
+      access: unrestricted
+    metrics:
+      access: unrestricted
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    web: ${LOG_LEVEL:INFO}
+    root: ${LOG_LEVEL:INFO}
+    com.example.logging: ${LOG_LEVEL:INFO}
+    reactor.netty.http.client: ${LOG_LEVEL:INFO}

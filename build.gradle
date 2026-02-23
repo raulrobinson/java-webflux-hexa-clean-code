@@ -1,0 +1,94 @@
+buildscript {
+	ext {
+		cleanArchitectureVersion = "${cleanArchitectureVersion}"
+		springBootVersion = "${springBootVersion}"
+		pitestVersion = "${pitestVersion}"
+        lombokVersion = "${lombokVersion}"
+	}
+}
+
+plugins {
+    id "org.sonarqube" version "${sonarqubePluginVersion}"
+    id 'org.owasp.dependencycheck' version "${owaspDependencyTrackPluginVersion}"
+	id 'org.springframework.boot' version "${springBootVersion}" apply false
+	id 'info.solidsoft.pitest' version "${pitestVersion}" apply false
+	id 'jacoco'
+}
+
+// Tarea global para ejecutar pruebas de arquitectura
+tasks.register('checkArchitecture') {
+    group = 'verification'
+    description = 'Ejecuta las pruebas de arquitectura en todo el proyecto'
+    dependsOn ':app-service:architectureTest'
+}
+
+// Configurar para todos los subproyectos
+subprojects {
+    afterEvaluate {
+        if (tasks.findByName('check')) {
+            tasks.check.dependsOn rootProject.tasks.checkArchitecture
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "${jacocoPluginVersion}"
+}
+
+tasks.register('jacocoRootReport', JacocoReport) {
+    description = 'Generates unified JaCoCo coverage report for all subprojects'
+    group = 'verification'
+
+    dependsOn subprojects.test, subprojects.jacocoTestReport
+
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
+    }
+
+    executionData.setFrom(subprojects.collect { project ->
+        project.fileTree(dir: project.buildDir, includes: ['**/jacoco/test.exec'])
+    }.flatten())
+
+    sourceDirectories.setFrom(subprojects.collect { project ->
+        project.sourceSets.main.allSource.srcDirs
+    }.flatten())
+
+    classDirectories.setFrom(subprojects.collect { project ->
+        project.sourceSets.main.output
+    })
+
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/MainApplication.class',
+                '**/*Config.class',
+                '**/*$Builder.class',
+                '**/Test.class',
+                '**/Tests.class',
+                '**/TestCase.class',
+                '**/com/example/lib/**',
+                '**/*MapperImpl.class',
+                '**/dto/**',
+                '**/mappers/**'
+        ])
+    }))
+}
+
+tasks.register('unifiedCoverageReport') {
+    description = 'Generates unified coverage report for all modules'
+    group = 'verification'
+    dependsOn jacocoRootReport
+
+    doLast {
+        println "\n" + "=" * 70
+        println "REPORTE UNIFICADO DE COBERTURA GENERADO"
+        println "=" * 70
+        println "\nREPORTE UNIFICADO:"
+        println "  HTML: build/reports/jacoco/jacocoRootReport/html/index.html"
+        println "  XML:  build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+        println "\n" + "=" * 70
+    }
+}
+
+apply from: './main.gradle'

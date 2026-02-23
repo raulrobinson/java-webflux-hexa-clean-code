@@ -1,0 +1,60 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    //implementation project(':use-case')
+    //implementation project(':model')
+    //implementation project(':ports')
+    //implementation project(':reactive-web')
+    //implementation project(':external-api')
+    //implementation project(':helpers')
+
+    implementation libs.boot.starter
+    implementation libs.boot.actuator
+    testImplementation libs.archunit
+    testImplementation libs.jackson.databind
+    runtimeOnly(libs.boot.devtools)
+}
+
+test {
+    useJUnitPlatform()
+    failFast = true
+
+    systemProperty 'archunit.freeze.store.default.path', layout.buildDirectory.dir('archunit-store').get().asFile.absolutePath
+
+    reports {
+        junitXml.required = true
+        html.required = true
+    }
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+tasks.register('architectureTest', Test) {
+    useJUnitPlatform()
+    include '**/ArchitectureTest.class'
+    failFast = true
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+build.dependsOn architectureTest
+
+tasks.register('explodedJar', Copy) {
+    with jar
+    into layout.buildDirectory.dir("exploded")
+}
+
+jar {
+    enabled = false
+}
+
+bootJar {
+    archiveFileName = "app.${archiveExtension.get()}"
+    destinationDirectory = file("${rootProject.projectDir}/boot/build/libs")
+}
